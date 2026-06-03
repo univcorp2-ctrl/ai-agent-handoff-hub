@@ -5,7 +5,15 @@ from datetime import datetime, timezone
 from typing import Any, Literal
 
 AgentName = Literal["Codex", "Claude Code", "Gemini", "Human"]
-TaskCategory = Literal["implementation", "documentation", "initial_setup", "ci_cd", "research", "review", "human_blocker"]
+TaskCategory = Literal[
+    "implementation",
+    "documentation",
+    "initial_setup",
+    "ci_cd",
+    "research",
+    "review",
+    "human_blocker",
+]
 Priority = Literal["P0", "P1", "P2", "P3"]
 
 
@@ -72,7 +80,13 @@ class HandoffReport:
     summary: dict[str, Any]
 
     @classmethod
-    def build(cls, *, target_repos: list[str], signals: list[RepositorySignal], tasks: list[TaskItem]) -> "HandoffReport":
+    def build(
+        cls,
+        *,
+        target_repos: list[str],
+        signals: list[RepositorySignal],
+        tasks: list[TaskItem],
+    ) -> "HandoffReport":
         by_agent: dict[str, int] = {}
         by_priority: dict[str, int] = {}
         for task in tasks:
@@ -96,7 +110,13 @@ class HandoffReport:
         return asdict(self)
 
     def to_markdown(self) -> str:
-        lines = ["# AI Agent Handoff Report", "", f"generated_at: `{self.generated_at}`", "", "## Summary"]
+        lines = [
+            "# AI Agent Handoff Report",
+            "",
+            f"generated_at: `{self.generated_at}`",
+            "",
+            "## Summary",
+        ]
         for key, value in self.summary.items():
             lines.append(f"- {key}: {value}")
         lines.extend(["", "## Tasks", ""])
