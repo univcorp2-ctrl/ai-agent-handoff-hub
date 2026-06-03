@@ -5,15 +5,7 @@ from datetime import datetime, timezone
 from typing import Any, Literal
 
 AgentName = Literal["Codex", "Claude Code", "Gemini", "Human"]
-TaskCategory = Literal[
-    "implementation",
-    "documentation",
-    "initial_setup",
-    "ci_cd",
-    "research",
-    "review",
-    "human_blocker",
-]
+TaskCategory = Literal["implementation", "documentation", "initial_setup", "ci_cd", "research", "review", "human_blocker"]
 Priority = Literal["P0", "P1", "P2", "P3"]
 
 
@@ -56,8 +48,6 @@ class TaskItem:
     human_reason: str | None = None
 
     def to_markdown(self) -> str:
-        blocker = "あり" if self.blocked_by_human else "なし"
-        human_reason = self.human_reason or "AIで継続可能"
         return (
             f"### {self.task_id}: {self.title}\n\n"
             f"- repo: `{self.repo}`\n"
@@ -65,8 +55,8 @@ class TaskItem:
             f"- priority: `{self.priority}`\n"
             f"- assigned_agent: `{self.assigned_agent}`\n"
             f"- status: `{self.status}`\n"
-            f"- human_blocker: {blocker}\n"
-            f"- human_reason: {human_reason}\n"
+            f"- human_blocker: {self.blocked_by_human}\n"
+            f"- human_reason: {self.human_reason or 'AIで継続可能'}\n"
             f"- why: {self.why}\n"
             f"- next_action: {self.next_action}\n"
             f"- source: {self.source_url or 'n/a'}\n"
@@ -83,7 +73,6 @@ class HandoffReport:
 
     @classmethod
     def build(cls, *, target_repos: list[str], signals: list[RepositorySignal], tasks: list[TaskItem]) -> "HandoffReport":
-        human_blockers = [task for task in tasks if task.blocked_by_human]
         by_agent: dict[str, int] = {}
         by_priority: dict[str, int] = {}
         for task in tasks:
@@ -96,7 +85,7 @@ class HandoffReport:
             tasks=tasks,
             summary={
                 "task_count": len(tasks),
-                "human_blocker_count": len(human_blockers),
+                "human_blocker_count": sum(1 for task in tasks if task.blocked_by_human),
                 "by_agent": by_agent,
                 "by_priority": by_priority,
                 "repos_scanned": len(signals),
@@ -107,37 +96,9 @@ class HandoffReport:
         return asdict(self)
 
     def to_markdown(self) -> str:
-        lines = [
-            "# AI Agent Handoff Report",
-            "",
-            f"generated_at: `{self.generated_at}`",
-            f"target_repos: `{', '.join(self.target_repos) or 'none'}`",
-            "",
-            "## Summary",
-            "",
-            f"- task_count: {self.summary['task_count']}",
-            f"- human_blocker_count: {self.summary['human_blocker_count']}",
-            f"- repos_scanned: {self.summary['repos_scanned']}",
-            f"- by_agent: `{self.summary['by_agent']}`",
-            f"- by_priority: `{self.summary['by_priority']}`",
-            "",
-            "## Tasks",
-            "",
-        ]
-        if not self.tasks:
-            lines.append("未完了タスクは検出されませんでした。")
-        else:
-            for task in self.tasks:
-                lines.append(task.to_markdown())
-        lines.extend(["", "## Signals", ""])
-        for signal in self.signals:
-            lines.append(f"### {signal.repo}")
-            lines.append(f"- missing_readme: {signal.missing_readme}")
-            lines.append(f"- missing_docs: {signal.missing_docs}")
-            lines.append(f"- stale_issues: {len(signal.stale_issues)}")
-            lines.append(f"- stale_pull_requests: {len(signal.stale_pull_requests)}")
-            lines.append(f"- failing_workflows: {len(signal.failing_workflows)}")
-            lines.append(f"- setup_keywords: {', '.join(signal.setup_keywords) or 'none'}")
-            lines.append(f"- warnings: {', '.join(signal.warnings) or 'none'}")
-            lines.append("")
+        lines = ["# AI Agent Handoff Report", "", f"generated_at: `{self.generated_at}`", "", "## Summary"]
+        for key, value in self.summary.items():
+            lines.append(f"- {key}: {value}")
+        lines.extend(["", "## Tasks", ""])
+        lines.extend(task.to_markdown() for task in self.tasks)
         return "\n".join(lines)
