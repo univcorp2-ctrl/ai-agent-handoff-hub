@@ -63,9 +63,9 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ github.token }}
           GH_PAT: ${{ secrets.GH_PAT }}
-          TARGET_REPOS: ${{ inputs.target_repos || github.repository }}
-          STALE_DAYS: ${{ inputs.stale_days || '14' }}
-          DRY_RUN: ${{ inputs.dry_run || 'true' }}
+          TARGET_REPOS: ${{ github.event.inputs.target_repos || github.repository }}
+          STALE_DAYS: ${{ github.event.inputs.stale_days || '14' }}
+          DRY_RUN: ${{ github.event.inputs.dry_run || 'true' }}
           NOTION_TOKEN: ${{ secrets.NOTION_TOKEN }}
           NOTION_DATABASE_ID: ${{ secrets.NOTION_DATABASE_ID }}
           GOOGLE_TASKS_API_TOKEN: ${{ secrets.GOOGLE_TASKS_API_TOKEN }}
