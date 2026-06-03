@@ -79,31 +79,6 @@ flowchart LR
 - `notion-payload.json`
 - `google-tasks-payload.json`
 
-### Integrations
-
-Notion / Google To Do は、Secretsがある場合だけ同期します。Secretsがない場合でもpayloadは生成されるため、次のAIまたは人間がどこから再開すべきかが明確になります。
-
-## データフロー
-
-```mermaid
-sequenceDiagram
-  participant GH as GitHub
-  participant S as Scanner
-  participant P as Planner
-  participant R as Reporter
-  participant N as Notion
-  participant T as Google To Do
-  participant A as AI Agents
-
-  GH->>S: repos / issues / PRs / actions
-  S->>P: RepositorySignal
-  P->>R: TaskItem list
-  R->>A: agent-commands.md
-  R->>N: notion payload or API sync
-  R->>T: google tasks payload or API sync
-  R->>GH: optional issue creation
-```
-
 ## Secrets設計
 
 実値はコードに書きません。READMEとdocsにはSecret名のみを残します。
@@ -114,9 +89,6 @@ sequenceDiagram
 - `GOOGLE_TASKS_API_TOKEN`
 - `GOOGLE_TASKS_TASKLIST_ID`
 - `GOOGLE_TASKS_WEBHOOK_URL`
-- `CODEX_COMMAND`
-- `CLAUDE_CODE_COMMAND`
-- `GEMINI_COMMAND`
 
 ## 本番実行に必要なもの
 
