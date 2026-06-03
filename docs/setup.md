@@ -8,9 +8,11 @@
 
 推奨権限:
 
-- 読み取り: Contents, Issues, Pull Requests, Actions
-- Issue自動作成を使う場合: Issues write
-- private repoを横断する場合: 対象repoへのアクセス権
+- Contents read
+- Issues read/write
+- Pull Requests read
+- Actions read
+- private repoを横断する場合は対象repoへのアクセス権
 
 ## 2. 対象リポジトリを指定
 
@@ -38,8 +40,6 @@ Notion DBには最低限以下のプロパティを用意してください。
 - `Priority` select
 - `Status` select
 
-認可やDB共有は外部サービス側の操作が必要なため、人間またはブラウザ操作可能なAIエージェントに渡してください。
-
 ## 4. Google To Do連携
 
 2つの方式があります。
@@ -55,21 +55,9 @@ Notion DBには最低限以下のプロパティを用意してください。
 
 Zapier、Make、Cloudflare WorkerなどでGoogle To Doへ渡す場合はWebhook方式が簡単です。
 
-## 5. AI実行役コマンド
-
-CLIで外部AIエージェントを直接呼ぶ運用に拡張する場合は、以下のSecretまたは環境変数を使います。
-
-- `CODEX_COMMAND`
-- `CLAUDE_CODE_COMMAND`
-- `GEMINI_COMMAND`
-
-現時点の実装では、まず `agent-commands.md` に実行指示を出力します。実際のCLI呼び出しは、利用環境ごとの安全ポリシーに合わせて追加できます。
-
-## 6. GitHub Actions実行
+## 5. GitHub Actions実行
 
 Actionsタブから `AI Agent Handoff Hub` を実行します。
-
-入力例:
 
 ```text
 target_repos: your-name/app-one,your-name/app-two
@@ -79,7 +67,7 @@ dry_run: true
 
 `dry_run=true` では、外部同期とIssue作成は行わず、Artifactだけを生成します。本番同期する場合は `dry_run=false` にしてください。
 
-## 7. 人間が必要な部分
+## 6. 人間が必要な部分
 
 AI側で完了できない可能性が高い操作:
 
