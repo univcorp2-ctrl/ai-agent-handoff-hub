@@ -2,12 +2,13 @@ from __future__ import annotations
 
 import argparse
 import sys
+from typing import Any
 
 from .config import AppConfig
 from .github_api import GitHubClient
 from .integrations.google_tasks import GoogleTasksClient
 from .integrations.notion import NotionClient
-from .models import HandoffReport
+from .models import HandoffReport, TaskItem
 from .planner import build_tasks
 from .reporting import write_report
 from .scanner import scan_repositories
@@ -16,12 +17,15 @@ from .scanner import scan_repositories
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="AI Agent Handoff Hub")
     sub = parser.add_subparsers(dest="command", required=True)
-    run_all = sub.add_parser("run-all", help="Scan repos, build handoff tasks, write reports, and sync integrations")
+    run_all = sub.add_parser(
+        "run-all",
+        help="Scan repos, build handoff tasks, write reports, and sync integrations",
+    )
     run_all.add_argument("--target-repos", default=None, help="Comma separated owner/repo list")
-    run_all.add_argument("--stale-days", type=int, default=None, help="Days since update to treat issue/PR as stale")
-    run_all.add_argument("--output-dir", default=None, help="Output directory")
-    run_all.add_argument("--dry-run", action="store_true", help="Do not create external issues or push integrations")
-    run_all.add_argument("--create-github-issues", action="store_true", help="Create GitHub issues for generated tasks")
+    run_all.add_argument("--stale-days", type=int, default=None)
+    run_all.add_argument("--output-dir", default=None)
+    run_all.add_argument("--dry-run", action="store_true")
+    run_all.add_argument("--create-github-issues", action="store_true")
     return parser
 
 
@@ -46,7 +50,11 @@ def run_all(args: argparse.Namespace) -> int:
     client = GitHubClient(config.github_token)
     signals = scan_repositories(client, config.target_repos, config.stale_days)
     tasks = build_tasks(signals)
-    report = HandoffReport.build(target_repos=config.target_repos, signals=signals, tasks=tasks)
+    report = HandoffReport.build(
+        target_repos=config.target_repos,
+        signals=signals,
+        tasks=tasks,
+    )
     write_report(report, config.output_dir)
 
     create_issues = args.create_github_issues or config.create_github_issues
@@ -69,17 +77,20 @@ def run_all(args: argparse.Namespace) -> int:
     return 0
 
 
-def create_github_issues(client: GitHubClient, tasks: list) -> None:
+def create_github_issues(client: GitHubClient, tasks: list[TaskItem]) -> None:
     for task in tasks:
         if task.blocked_by_human:
             continue
-        body = task.to_markdown() + "\n\nCreated by AI Agent Handoff Hub."
         client.create_issue(
             task.repo,
             title=f"[AI Handoff] {task.title}",
-            body=body,
-            labels=["ai-handoff", f"agent:{task.assigned_agent}", f"priority:{task.priority}"],
+            body=task.to_markdown() + "\n\nCreated by AI Agent Handoff Hub.",
+            labels=issue_labels(task),
         )
+
+
+def issue_labels(task: TaskItem) -> list[str]:
+    return ["ai-handoff", f"agent:{task.assigned_agent}", f"priority:{task.priority}"]
 
 
 if __name__ == "__main__":
