@@ -33,16 +33,16 @@ class GitHubClient:
             method=method,
         )
         try:
-            with urlopen(request, timeout=20) as response:  # noqa: S310 - fixed GitHub API URL
+            with urlopen(request, timeout=20) as response:  # noqa: S310
                 data = response.read().decode("utf-8")
         except HTTPError as exc:
             detail = exc.read().decode("utf-8", errors="replace")
-            raise GitHubApiError(f"GitHub API {method} {path} failed: {exc.code} {detail}") from exc
+            raise GitHubApiError(
+                f"GitHub API {method} {path} failed: {exc.code} {detail}"
+            ) from exc
         except URLError as exc:
             raise GitHubApiError(f"GitHub API {method} {path} failed: {exc}") from exc
-        if not data:
-            return None
-        return json.loads(data)
+        return json.loads(data) if data else None
 
     def get_repo(self, full_name: str) -> dict[str, Any]:
         owner, repo = split_repo(full_name)
@@ -54,20 +54,34 @@ class GitHubClient:
 
     def get_contents(self, full_name: str, path: str) -> Any:
         owner, repo = split_repo(full_name)
-        return self._request("GET", f"/repos/{quote(owner)}/{quote(repo)}/contents/{quote(path)}")
+        return self._request(
+            "GET",
+            f"/repos/{quote(owner)}/{quote(repo)}/contents/{quote(path)}",
+        )
 
     def list_open_issues_and_prs(self, full_name: str) -> list[dict[str, Any]]:
         owner, repo = split_repo(full_name)
         return self._request(
             "GET",
-            f"/repos/{quote(owner)}/{quote(repo)}/issues?state=open&per_page=100&sort=updated&direction=asc",
+            f"/repos/{quote(owner)}/{quote(repo)}/issues"
+            "?state=open&per_page=100&sort=updated&direction=asc",
         )
 
     def list_workflow_runs(self, full_name: str) -> dict[str, Any]:
         owner, repo = split_repo(full_name)
-        return self._request("GET", f"/repos/{quote(owner)}/{quote(repo)}/actions/runs?per_page=10")
+        return self._request(
+            "GET",
+            f"/repos/{quote(owner)}/{quote(repo)}/actions/runs?per_page=10",
+        )
 
-    def create_issue(self, full_name: str, *, title: str, body: str, labels: list[str] | None = None) -> dict[str, Any]:
+    def create_issue(
+        self,
+        full_name: str,
+        *,
+        title: str,
+        body: str,
+        labels: list[str] | None = None,
+    ) -> dict[str, Any]:
         owner, repo = split_repo(full_name)
         return self._request(
             "POST",
