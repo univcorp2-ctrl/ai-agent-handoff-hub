@@ -39,7 +39,8 @@ class GoogleTasksClient:
         return GoogleTasksSyncResult(True, len(payloads))
 
     def _insert_task(self, payload: dict[str, str]) -> Any:
-        url = f"https://tasks.googleapis.com/tasks/v1/lists/{quote(self.tasklist_id or '')}/tasks"
+        tasklist_id = quote(self.tasklist_id or "")
+        url = f"https://tasks.googleapis.com/tasks/v1/lists/{tasklist_id}/tasks"
         return post_json(url, payload, {"Authorization": f"Bearer {self.token}"})
 
 
