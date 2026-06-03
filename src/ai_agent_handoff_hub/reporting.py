@@ -12,7 +12,10 @@ def write_report(report: HandoffReport, output_dir: Path) -> None:
     (output_dir / "handoff-report.md").write_text(report.to_markdown(), encoding="utf-8")
     write_json(output_dir / "notion-payload.json", build_notion_payload(report.tasks))
     write_json(output_dir / "google-tasks-payload.json", build_google_tasks_payload(report.tasks))
-    (output_dir / "agent-commands.md").write_text(build_agent_commands(report.tasks), encoding="utf-8")
+    (output_dir / "agent-commands.md").write_text(
+        build_agent_commands(report.tasks),
+        encoding="utf-8",
+    )
 
 
 def write_json(path: Path, data: object) -> None:
@@ -58,7 +61,7 @@ def build_agent_commands(tasks: list[TaskItem]) -> str:
     lines = [
         "# Agent Commands",
         "",
-        "このファイルはCodex / Claude Code / Geminiへ渡すための引き継ぎ指示です。",
+        "Codex / Claude Code / Geminiへ渡すための引き継ぎ指示です。",
         "Secretsの実値は書かず、必要なSecret名だけを使ってください。",
         "",
     ]
