@@ -5,7 +5,12 @@ from ai_agent_handoff_hub.planner import build_tasks
 
 
 def test_build_tasks_assigns_docs_to_claude_code() -> None:
-    signal = RepositorySignal(repo="owner/repo", scanned_at="2026-01-01T00:00:00+00:00", missing_readme=True, missing_docs=True)
+    signal = RepositorySignal(
+        repo="owner/repo",
+        scanned_at="2026-01-01T00:00:00+00:00",
+        missing_readme=True,
+        missing_docs=True,
+    )
 
     tasks = build_tasks([signal])
 
