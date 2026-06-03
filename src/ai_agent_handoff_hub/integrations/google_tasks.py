@@ -32,7 +32,7 @@ class GoogleTasksClient:
             return GoogleTasksSyncResult(
                 False,
                 0,
-                "GOOGLE_TASKS_API_TOKEN + GOOGLE_TASKS_TASKLIST_ID or GOOGLE_TASKS_WEBHOOK_URL is not configured",
+                "Google Tasks token/list id or webhook URL is not configured",
             )
         for payload in payloads:
             self._insert_task(payload)
@@ -51,6 +51,6 @@ def post_json(url: str, payload: dict[str, Any], headers: dict[str, str]) -> Any
         headers={"Content-Type": "application/json", **headers},
         method="POST",
     )
-    with urlopen(request, timeout=20) as response:  # noqa: S310 - URL comes from configured webhook or Google API
+    with urlopen(request, timeout=20) as response:  # noqa: S310
         raw = response.read().decode("utf-8")
         return json.loads(raw) if raw else {"ok": True}
