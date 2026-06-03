@@ -6,10 +6,25 @@ from typing import Any
 from .github_api import GitHubApiError, GitHubClient
 from .models import RepositorySignal, StalledItem
 
-SETUP_KEYWORDS = ("setup", "initial", "bootstrap", "api key", "secret", "deploy", "環境", "初期設定", "API", "認証")
+SETUP_KEYWORDS = (
+    "setup",
+    "initial",
+    "bootstrap",
+    "api key",
+    "secret",
+    "deploy",
+    "環境",
+    "初期設定",
+    "API",
+    "認証",
+)
 
 
-def scan_repositories(client: GitHubClient, repos: list[str], stale_days: int) -> list[RepositorySignal]:
+def scan_repositories(
+    client: GitHubClient,
+    repos: list[str],
+    stale_days: int,
+) -> list[RepositorySignal]:
     return [scan_repository(client, repo, stale_days) for repo in repos]
 
 
@@ -46,7 +61,7 @@ def scan_repository(client: GitHubClient, repo: str, stale_days: int) -> Reposit
             updated_at = parse_github_datetime(item.get("updated_at"))
             title = item.get("title", "Untitled")
             body = item.get("body") or ""
-            if any(keyword.lower() in f"{title} {body}".lower() for keyword in SETUP_KEYWORDS):
+            if has_setup_keyword(title, body):
                 setup_keywords.append(title)
             if updated_at and updated_at <= cutoff:
                 stalled = StalledItem(
@@ -83,6 +98,11 @@ def scan_repository(client: GitHubClient, repo: str, stale_days: int) -> Reposit
         warnings=warnings,
         source_url=source_url,
     )
+
+
+def has_setup_keyword(title: str, body: str) -> bool:
+    text = f"{title} {body}".lower()
+    return any(keyword.lower() in text for keyword in SETUP_KEYWORDS)
 
 
 def parse_github_datetime(value: Any) -> datetime | None:
