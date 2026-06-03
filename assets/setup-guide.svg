@@ -1,0 +1,46 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1672" height="941" viewBox="0 0 1672 941" role="img" aria-labelledby="title desc">
+<title id="title">AIエージェント導入の初期設定ガイド</title>
+<desc id="desc">GitHub連携、AI実行役、Secrets、初期設定、タスク管理、CI本番実行の6ステップガイド</desc>
+<defs>
+  <linearGradient id="b" x1="0" x2="1"><stop offset="0" stop-color="#2563eb"/><stop offset="1" stop-color="#7c3aed"/></linearGradient>
+  <linearGradient id="g" x1="0" x2="1"><stop offset="0" stop-color="#0ea5e9"/><stop offset="1" stop-color="#10b981"/></linearGradient>
+  <filter id="s" x="-20%" y="-20%" width="140%" height="140%"><feDropShadow dx="0" dy="8" stdDeviation="10" flood-color="#1e3a8a" flood-opacity="0.10"/></filter>
+  <style>.bg{fill:#f8fbff}.title{font:900 70px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#0f172a}.grad{fill:url(#b)}.sub{font:700 28px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#475569}.card{fill:#fff;stroke:#bfdbfe;stroke-width:2;filter:url(#s)}.head{fill:url(#b)}.headg{fill:url(#g)}.h{font:800 25px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#fff}.body{font:600 21px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#0f172a}.small{font:500 18px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#334155}.arrow{stroke:#0ea5e9;stroke-width:8;stroke-linecap:round;marker-end:url(#a)}.tip{font:800 24px system-ui,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;fill:#2563eb}</style>
+  <marker id="a" markerWidth="12" markerHeight="12" refX="9" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#0ea5e9"/></marker>
+</defs>
+<rect class="bg" width="1672" height="941"/>
+<text x="300" y="78" class="title">AIエージェント導入の</text><text x="1020" y="78" class="title grad">初期設定ガイド</text>
+<text x="430" y="126" class="sub">人間が触るのは最小限。まずここだけ設定すれば、自動運転に近づけます。</text>
+
+<g transform="translate(22 150)">
+<rect width="260" height="430" rx="20" class="card"/><rect x="14" y="16" width="232" height="44" rx="22" class="head"/><text x="38" y="46" class="h">1. GitHub連携を準備</text><circle cx="130" cy="132" r="56" fill="#eff6ff"/><text x="98" y="150" font-size="72">⌁</text><text x="30" y="230" class="body">• 対象リポジトリを作成 /</text><text x="50" y="258" class="body">既存リポジトリを指定</text><text x="30" y="304" class="body">• Issues・PR・Actions を</text><text x="50" y="332" class="body">AIが読める状態にする</text><text x="30" y="378" class="body">• README と docs を初期化</text>
+</g>
+<path d="M292 365 H326" class="arrow"/>
+<g transform="translate(312 150)">
+<rect width="260" height="430" rx="20" class="card"/><rect x="14" y="16" width="232" height="44" rx="22" class="head"/><text x="35" y="46" class="h">2. AI実行役を決める</text><rect x="26" y="86" width="62" height="96" rx="12" fill="#ecfdf5" stroke="#99f6e4"/><text x="36" y="124" class="body" fill="#047857">Codex</text><rect x="99" y="86" width="62" height="96" rx="12" fill="#fff7ed" stroke="#fed7aa"/><text x="104" y="124" class="small" fill="#ea580c">Claude</text><text x="107" y="150" class="small" fill="#ea580c">Code</text><rect x="172" y="86" width="62" height="96" rx="12" fill="#eff6ff" stroke="#bfdbfe"/><text x="178" y="124" class="body" fill="#2563eb">Gemini</text><text x="28" y="228" class="body">• Codex: 実装・修正・テスト</text><text x="28" y="272" class="body">• Claude Code: 設計・整理・文章化</text><text x="28" y="316" class="body">• Gemini: 調査・検証・QA</text><text x="28" y="360" class="body">• 役割分担を固定する</text>
+</g>
+<path d="M582 365 H616" class="arrow"/>
+<g transform="translate(602 150)">
+<rect width="260" height="430" rx="20" class="card"/><rect x="14" y="16" width="232" height="44" rx="22" class="head"/><text x="32" y="46" class="h">3. Secrets / API を登録</text><circle cx="130" cy="132" r="72" fill="#ede9fe"/><text x="102" y="154" font-size="76" fill="#7c3aed">🔑</text><text x="28" y="230" class="body">• GitHub / Cloudflare Secrets</text><text x="48" y="258" class="body">に保存</text><text x="28" y="304" class="body">• APIキー・環境変数を安全管理</text><text x="28" y="348" class="body">• READMEには実値を書かない</text><text x="28" y="392" class="body">• 接続確認を自動実行</text>
+</g>
+<path d="M872 365 H906" class="arrow"/>
+<g transform="translate(892 150)">
+<rect width="260" height="430" rx="20" class="card"/><rect x="14" y="16" width="232" height="44" rx="22" class="head"/><text x="34" y="46" class="h">4. 初期設定を自動化</text><rect x="58" y="88" width="144" height="92" rx="14" fill="#eff6ff" stroke="#bfdbfe"/><text x="80" y="145" font-size="58" fill="#2563eb">⚙</text><text x="28" y="230" class="body">• 依存関係インストール</text><text x="28" y="274" class="body">• 設定ファイル生成</text><text x="28" y="318" class="body">• ブラウザ操作はAIが代行</text><text x="28" y="362" class="body">• ローカルファイル更新・検証</text>
+</g>
+<path d="M1162 365 H1196" class="arrow"/>
+<g transform="translate(1182 150)">
+<rect width="260" height="430" rx="20" class="card"/><rect x="14" y="16" width="232" height="44" rx="22" class="headg"/><text x="29" y="46" class="h">5. タスク管理と可視化</text><circle cx="130" cy="132" r="64" fill="#ecfeff"/><text x="94" y="152" font-size="64" fill="#0f766e">↻</text><text x="28" y="230" class="body">• Notionへタスクと進捗を同期</text><text x="28" y="274" class="body">• Google To Doへ未完了を反映</text><text x="28" y="318" class="body">• 進捗・ログ・次アクション蓄積</text><text x="28" y="362" class="body">• 引き継ぎメモを保存</text>
+</g>
+<path d="M1452 365 H1486" class="arrow"/>
+<g transform="translate(1472 150)">
+<rect width="178" height="430" rx="20" class="card"/><rect x="14" y="16" width="150" height="44" rx="22" class="headg"/><text x="28" y="46" class="h">6. CI / 本番</text><circle cx="89" cy="128" r="60" fill="#ecfeff"/><text x="56" y="150" font-size="70">🚀</text><text x="22" y="230" class="body">• テスト / CI</text><text x="22" y="272" class="body">• ログ解析→修正</text><text x="22" y="314" class="body">• 本番前チェック</text><text x="22" y="356" class="body">• 最小の人間作業</text>
+</g>
+
+<rect x="24" y="612" width="820" height="138" rx="20" fill="#ecfdf5" stroke="#99f6e4"/><text x="210" y="650" class="tip" fill="#0f766e">AIが自動で残すもの</text><text x="210" y="704" class="body">README更新　docs/architecture.md　docs/setup.md　引き継ぎメモ　未完了タスク一覧</text><text x="70" y="708" font-size="80">🤖</text>
+<rect x="862" y="612" width="786" height="138" rx="20" fill="#fff7ed" stroke="#fed7aa"/><text x="1030" y="650" class="tip" fill="#ea580c">人間が必要になる可能性が高い部分</text><text x="1028" y="704" class="body">外部サービスの本人確認　最終承認　課金開始　利用規約同意　二段階認証</text><text x="902" y="708" font-size="78">⚠</text>
+
+<rect x="24" y="782" width="394" height="104" rx="18" fill="#fff" stroke="#dbeafe"/><text x="72" y="826" class="tip">1 Secretsはコードに直書きしない</text><text x="72" y="862" class="small">公開リポジトリでも安全に運用。</text>
+<rect x="440" y="782" width="394" height="104" rx="18" fill="#fff" stroke="#dbeafe"/><text x="488" y="826" class="tip">2 止まったらログを残す</text><text x="488" y="862" class="small">AIが続きから再開できる。</text>
+<rect x="856" y="782" width="394" height="104" rx="18" fill="#fff" stroke="#dbeafe"/><text x="904" y="826" class="tip">3 AI同士で文脈を共有</text><text x="904" y="862" class="small">引き継ぎメモで判断を保存。</text>
+<rect x="1272" y="782" width="376" height="104" rx="18" fill="#fff" stroke="#dbeafe"/><text x="1320" y="826" class="tip">4 README先頭に図を置く</text><text x="1320" y="862" class="small">全員が最短で理解できる。</text>
+</svg>
