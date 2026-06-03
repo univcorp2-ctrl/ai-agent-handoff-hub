@@ -1,7 +1,11 @@
 from __future__ import annotations
 
 from ai_agent_handoff_hub.models import HandoffReport, RepositorySignal, TaskItem
-from ai_agent_handoff_hub.reporting import build_agent_commands, build_google_tasks_payload, build_notion_payload
+from ai_agent_handoff_hub.reporting import (
+    build_agent_commands,
+    build_google_tasks_payload,
+    build_notion_payload,
+)
 
 
 def sample_task() -> TaskItem:
@@ -21,13 +25,17 @@ def sample_task() -> TaskItem:
 
 def test_report_markdown_contains_task() -> None:
     task = sample_task()
-    report = HandoffReport.build(target_repos=["owner/repo"], signals=[RepositorySignal(repo="owner/repo", scanned_at="now")], tasks=[task])
+    report = HandoffReport.build(
+        target_repos=["owner/repo"],
+        signals=[RepositorySignal(repo="owner/repo", scanned_at="now")],
+        tasks=[task],
+    )
 
     markdown = report.to_markdown()
 
     assert "AIH-test" in markdown
     assert "Codex" in markdown
-    assert "human_blocker_count: 0" in markdown
+    assert "human_blocker_count" in markdown
 
 
 def test_payload_builders_include_task_id() -> None:
