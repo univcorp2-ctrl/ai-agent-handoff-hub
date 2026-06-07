@@ -40,7 +40,7 @@ def run_all(args: argparse.Namespace) -> int:
         target_repos=args.target_repos,
         stale_days=args.stale_days,
         output_dir=args.output_dir,
-        dry_run=args.dry_run,
+        dry_run=True if args.dry_run else None,
     )
     if not config.target_repos:
         print("No target repos specified. Use --target-repos owner/repo or TARGET_REPOS.", file=sys.stderr)
