@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import asdict
+import json
 import sys
 
 from .config import AppConfig
@@ -16,6 +18,7 @@ from .scanner import scan_repositories
 def build_parser() -> argparse.ArgumentParser:
     parser = argparse.ArgumentParser(description="AI Agent Handoff Hub")
     sub = parser.add_subparsers(dest="command", required=True)
+
     run_all = sub.add_parser(
         "run-all",
         help="Scan repos, build handoff tasks, write reports, and sync integrations",
@@ -25,6 +28,19 @@ def build_parser() -> argparse.ArgumentParser:
     run_all.add_argument("--output-dir", default=None)
     run_all.add_argument("--dry-run", action="store_true")
     run_all.add_argument("--create-github-issues", action="store_true")
+
+    upload_image = sub.add_parser(
+        "upload-notion-image",
+        help="Upload a local image through Notion File Upload API and attach it to a page",
+    )
+    upload_image.add_argument("--page-id", required=True, help="Target Notion page or block ID")
+    upload_image.add_argument("--file", required=True, help="Local image file path")
+    upload_image.add_argument("--caption", default=None, help="Optional image caption")
+    upload_image.add_argument(
+        "--skip-verify",
+        action="store_true",
+        help="Skip the final Notion block readback check",
+    )
     return parser
 
 
@@ -32,7 +48,21 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     if args.command == "run-all":
         return run_all(args)
+    if args.command == "upload-notion-image":
+        return upload_notion_image(args)
     raise ValueError(f"Unknown command: {args.command}")
+
+
+def upload_notion_image(args: argparse.Namespace) -> int:
+    config = AppConfig.from_env()
+    result = NotionClient(config.notion_token).upload_image(
+        args.page_id,
+        args.file,
+        caption=args.caption,
+        verify=not args.skip_verify,
+    )
+    print(json.dumps(asdict(result), ensure_ascii=False, indent=2))
+    return 0 if result.attached else 1
 
 
 def run_all(args: argparse.Namespace) -> int:
