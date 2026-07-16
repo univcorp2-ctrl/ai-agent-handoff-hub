@@ -32,13 +32,28 @@ pytest -q
 
 GitHub Actionsからは `AI Agent Handoff Hub` workflowを手動実行するか、定期実行を有効化してください。成果物は `ai-agent-handoff-report` Artifact として保存されます。
 
+## Notion画像アップロードの共通標準
+
+Notionへ画像を保存するときは、Google Driveの閲覧URLや一時的な外部URLを使わず、Notion公式File Upload APIを利用します。
+
+```bash
+python -m ai_agent_handoff_hub upload-notion-image \
+  --page-id "NOTION_PAGE_ID" \
+  --file "/absolute/path/to/image.png" \
+  --caption "図解の説明"
+```
+
+画像本体のアップロード、ページへの画像ブロック追加、追加後の再取得検証を一つの処理で行います。出力が`attached=true`かつ`verified=true`になった場合だけ成功です。
+
+**禁止:** Google Driveの`/view` URLをNotionの画像URLとして渡さないでください。詳細は[`docs/notion-image-upload.md`](docs/notion-image-upload.md)を参照してください。
+
 ## 推奨Secrets
 
 | Secret名 | 用途 | 必須 |
 |---|---|---|
 | `GH_PAT` | 複数リポジトリを横断して読む/Issue作成するためのGitHub token | 推奨 |
-| `NOTION_TOKEN` | Notion API連携 | 任意 |
-| `NOTION_DATABASE_ID` | タスク同期先Notion DB | 任意 |
+| `NOTION_TOKEN` | Notion API連携・画像アップロード | Notion利用時は必須 |
+| `NOTION_DATABASE_ID` | タスク同期先Notion DB | タスク同期時は必須 |
 | `GOOGLE_TASKS_API_TOKEN` | Google Tasks API連携用アクセストークン | 任意 |
 | `GOOGLE_TASKS_TASKLIST_ID` | Google To Do / Tasks の同期先リストID | 任意 |
 | `GOOGLE_TASKS_WEBHOOK_URL` | Google Tasks連携を外部自動化に委譲する場合のWebhook | 任意 |
@@ -76,4 +91,4 @@ flowchart LR
   R --> H[Handoff Memo]
 ```
 
-詳細は [`docs/architecture.md`](docs/architecture.md) と [`docs/setup.md`](docs/setup.md) を見てください。
+詳細は [`docs/architecture.md`](docs/architecture.md)、[`docs/setup.md`](docs/setup.md)、[`docs/notion-image-upload.md`](docs/notion-image-upload.md) を見てください。
