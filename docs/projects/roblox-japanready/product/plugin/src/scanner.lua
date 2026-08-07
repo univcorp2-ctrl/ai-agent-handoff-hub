@@ -1,5 +1,7 @@
 --!strict
 
+local Rules = require(script.Parent.rules)
+
 export type Finding = {
 	path: string,
 	className: string,
@@ -11,6 +13,10 @@ export type Finding = {
 	warnings: { string },
 }
 
+export type ScanOptions = {
+	longTextThreshold: number?,
+}
+
 local Scanner = {}
 
 local TEXT_CLASSES: { [string]: boolean } = {
@@ -18,8 +24,6 @@ local TEXT_CLASSES: { [string]: boolean } = {
 	TextButton = true,
 	TextBox = true,
 }
-
-local DEFAULT_LONG_TEXT_THRESHOLD = 80
 
 local function safeRead(instance: Instance, propertyName: string): any
 	local ok, value = pcall(function()
@@ -41,11 +45,7 @@ local function instancePath(instance: Instance): string
 	return "game." .. table.concat(parts, ".")
 end
 
-local function appendWarning(warnings: { string }, code: string)
-	table.insert(warnings, code)
-end
-
-local function scanTextInstance(instance: Instance, longTextThreshold: number): Finding?
+local function scanTextInstance(instance: Instance, options: ScanOptions?): Finding?
 	if not TEXT_CLASSES[instance.ClassName] then
 		return nil
 	end
@@ -58,20 +58,15 @@ local function scanTextInstance(instance: Instance, longTextThreshold: number): 
 	local characterCount = utf8.len(rawText) or #rawText
 	local autoLocalize = safeRead(instance, "AutoLocalize")
 	local matchIdentifier = safeRead(instance, "LocalizationMatchIdentifier")
-	local warnings: { string } = {}
+	local normalizedAutoLocalize = if typeof(autoLocalize) == "boolean" then autoLocalize else nil
+	local normalizedMatchIdentifier = if typeof(matchIdentifier) == "string" then matchIdentifier else nil
 
-	if autoLocalize == false then
-		appendWarning(warnings, "AUTOLOCALIZE_DISABLED")
-	end
-	if characterCount > longTextThreshold then
-		appendWarning(warnings, "LONG_TEXT_REVIEW")
-	end
-	if string.find(rawText, "\n", 1, true) or string.find(rawText, "\r", 1, true) then
-		appendWarning(warnings, "LINE_BREAK_REVIEW")
-	end
-	if autoLocalize == false and (matchIdentifier == nil or matchIdentifier == "") then
-		appendWarning(warnings, "HARD_CODED_TEXT_CANDIDATE")
-	end
+	local warnings = Rules.evaluate({
+		text = rawText,
+		textLength = characterCount,
+		autoLocalize = normalizedAutoLocalize,
+		localizationMatchIdentifier = normalizedMatchIdentifier,
+	}, options)
 
 	return {
 		path = instancePath(instance),
@@ -79,21 +74,16 @@ local function scanTextInstance(instance: Instance, longTextThreshold: number): 
 		name = instance.Name,
 		text = rawText,
 		textLength = characterCount,
-		autoLocalize = if typeof(autoLocalize) == "boolean" then autoLocalize else nil,
-		localizationMatchIdentifier = if typeof(matchIdentifier) == "string" then matchIdentifier else nil,
+		autoLocalize = normalizedAutoLocalize,
+		localizationMatchIdentifier = normalizedMatchIdentifier,
 		warnings = warnings,
 	}
 end
 
-function Scanner.scan(root: Instance, options: { longTextThreshold: number? }?): { Finding }
-	local threshold = DEFAULT_LONG_TEXT_THRESHOLD
-	if options and options.longTextThreshold then
-		threshold = math.max(1, math.floor(options.longTextThreshold))
-	end
-
+function Scanner.scan(root: Instance, options: ScanOptions?): { Finding }
 	local findings: { Finding } = {}
 	for _, descendant in ipairs(root:GetDescendants()) do
-		local finding = scanTextInstance(descendant, threshold)
+		local finding = scanTextInstance(descendant, options)
 		if finding then
 			table.insert(findings, finding)
 		end
