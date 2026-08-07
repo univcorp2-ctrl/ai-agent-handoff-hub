@@ -42,7 +42,7 @@ if ($LASTEXITCODE -eq 0) {
 if (-not $repoExists) {
     if ($PSCmdlet.ShouldProcess($repoFullName, "Create $Visibility GitHub repository")) {
         $visibilityFlag = "--$Visibility"
-        & gh repo create $repoFullName $visibilityFlag --description "Roblox Japan launch service, prospect pipeline, and JapanReady Studio plugin" --disable-issues:$false --disable-wiki
+        & gh repo create $repoFullName $visibilityFlag --description "Roblox Japan launch service, prospect pipeline, and JapanReady Studio plugin" --disable-wiki
         if ($LASTEXITCODE -ne 0) { throw "Failed to create GitHub repository: $repoFullName" }
     }
 }
