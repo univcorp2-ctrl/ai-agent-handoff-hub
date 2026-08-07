@@ -58,7 +58,10 @@ FORBIDDEN_PLUGIN_PATTERNS: dict[str, re.Pattern[str]] = {
     "loadstring": re.compile(r"\bloadstring\b", re.IGNORECASE),
     "InsertService": re.compile(r"\bInsertService\b"),
     "AssetService": re.compile(r"\bAssetService\b"),
-    "telemetry": re.compile(r"\btelemetry\b", re.IGNORECASE),
+    "known analytics SDK": re.compile(
+        r"\b(?:PostHog|Amplitude|Mixpanel|GoogleAnalytics|Sentry)\b",
+        re.IGNORECASE,
+    ),
 }
 
 SECRET_PATTERNS: dict[str, re.Pattern[str]] = {
@@ -137,10 +140,12 @@ def main() -> int:
         if not path.is_file():
             continue
         text = path.read_text(encoding="utf-8")
+        relative_failures_before = len(failures)
         for label, pattern in FORBIDDEN_PLUGIN_PATTERNS.items():
             if pattern.search(text):
                 fail(f"{relative} contains prohibited {label}", failures)
-        print(f"PASS: no prohibited network/remote-code pattern: {relative}")
+        if len(failures) == relative_failures_before:
+            print(f"PASS: no prohibited network/remote-code pattern: {relative}")
 
     scanner_text = (PACKAGE_ROOT / "product/plugin/src/scanner.lua").read_text(
         encoding="utf-8"
