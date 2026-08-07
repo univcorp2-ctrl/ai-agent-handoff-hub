@@ -127,13 +127,12 @@ def main() -> int:
 
     if isinstance(project, dict):
         tree = project.get("tree", {})
-        if tree.get("$className") != "Folder" or tree.get("$path") != "src":
-            fail(
-                "Rojo prototype must build a Folder model rooted at plugin/src",
-                failures,
-            )
+        if tree.get("$path") != "src":
+            fail("Rojo prototype must build the plugin/model from plugin/src", failures)
+        elif tree.get("$className") == "DataModel":
+            fail("Rojo prototype must not build a full DataModel/place", failures)
         else:
-            print("PASS: Rojo prototype is a model root, not ServerScriptService")
+            print("PASS: Rojo prototype uses the official path-root model format")
 
     for relative in PLUGIN_SOURCE_FILES:
         path = PACKAGE_ROOT / relative
