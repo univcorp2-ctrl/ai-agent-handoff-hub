@@ -1,0 +1,39 @@
+name: Validate Roblox JapanReady handoff
+
+on:
+  pull_request:
+    paths:
+      - "docs/projects/roblox-japanready/**"
+      - ".github/workflows/roblox-japanready-validate.yml"
+  push:
+    branches:
+      - "feature/roblox-japanready-bootstrap"
+    paths:
+      - "docs/projects/roblox-japanready/**"
+      - ".github/workflows/roblox-japanready-validate.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  static-validation:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Validate handoff structure, policies, JSON, and source safety
+        run: >-
+          python
+          docs/projects/roblox-japanready/scripts/validate_handoff.py
+
+      - name: Record remaining test boundary
+        run: |
+          echo "Static validation does not replace Luau lint/unit tests, PowerShell execution, Roblox Studio smoke testing, Seller Onboarding, or independent agent review."
