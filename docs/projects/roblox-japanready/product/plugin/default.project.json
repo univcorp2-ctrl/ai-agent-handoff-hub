@@ -1,12 +1,7 @@
 {
   "name": "JapanReady",
   "tree": {
-    "$className": "DataModel",
-    "ServerScriptService": {
-      "$className": "ServerScriptService",
-      "JapanReadyPlugin": {
-        "$path": "src"
-      }
-    }
+    "$className": "Folder",
+    "$path": "src"
   }
 }
