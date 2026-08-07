@@ -1,0 +1,87 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "Roblox Studio Prospect",
+  "type": "object",
+  "additionalProperties": false,
+  "required": [
+    "prospect_id",
+    "studio_name",
+    "experience_name",
+    "experience_url",
+    "creator_url",
+    "evidence_checked_at",
+    "japanese_support_state",
+    "observed_issue",
+    "contact_verification",
+    "fit_score",
+    "priority",
+    "outreach_status",
+    "next_action"
+  ],
+  "properties": {
+    "prospect_id": {"type": "string", "pattern": "^RBX-[0-9]{3}$"},
+    "studio_name": {"type": "string", "minLength": 1},
+    "studio_url": {"type": ["string", "null"], "format": "uri"},
+    "experience_name": {"type": "string", "minLength": 1},
+    "experience_url": {"type": "string", "format": "uri"},
+    "creator_url": {"type": "string", "format": "uri"},
+    "contact_channel": {
+      "type": ["string", "null"],
+      "enum": ["email", "contact_form", "discord", "linkedin", "x", "other", null]
+    },
+    "contact_url": {"type": ["string", "null"], "format": "uri"},
+    "contact_value": {"type": ["string", "null"]},
+    "contact_verification": {
+      "type": "string",
+      "enum": ["verified_official", "verified_public_profile", "unverified", "not_found"]
+    },
+    "evidence_checked_at": {"type": "string", "format": "date-time"},
+    "recent_activity_evidence": {"type": ["string", "null"]},
+    "japanese_support_state": {
+      "type": "string",
+      "enum": [
+        "none_observed",
+        "partial",
+        "automatic_only_suspected",
+        "manual_but_incomplete",
+        "strong_existing_support",
+        "unknown"
+      ]
+    },
+    "observed_issue": {"type": "string", "minLength": 10},
+    "observation_evidence_url": {"type": ["string", "null"], "format": "uri"},
+    "fit_score": {"type": "integer", "minimum": 0, "maximum": 100},
+    "score_components": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "japan_gap": {"type": "integer", "minimum": 0, "maximum": 30},
+        "commercial_activity": {"type": "integer", "minimum": 0, "maximum": 25},
+        "contactability": {"type": "integer", "minimum": 0, "maximum": 20},
+        "studio_fit": {"type": "integer", "minimum": 0, "maximum": 15},
+        "evidence_quality": {"type": "integer", "minimum": 0, "maximum": 10}
+      }
+    },
+    "priority": {"type": "string", "enum": ["A", "B", "C", "exclude"]},
+    "outreach_status": {
+      "type": "string",
+      "enum": [
+        "not_contacted",
+        "drafted",
+        "checker_passed",
+        "sent",
+        "replied",
+        "meeting",
+        "pilot_proposed",
+        "won",
+        "lost",
+        "do_not_contact"
+      ]
+    },
+    "message_version": {"type": ["string", "null"]},
+    "last_contacted_at": {"type": ["string", "null"], "format": "date-time"},
+    "follow_up_at": {"type": ["string", "null"], "format": "date-time"},
+    "next_action": {"type": "string", "minLength": 1},
+    "notes": {"type": ["string", "null"]}
+  }
+}
