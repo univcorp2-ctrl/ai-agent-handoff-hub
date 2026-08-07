@@ -13,7 +13,7 @@ export type Finding = {
 
 local Scanner = {}
 
-local TEXT_CLASSES = {
+local TEXT_CLASSES: { [string]: boolean } = {
 	TextLabel = true,
 	TextButton = true,
 	TextBox = true,
@@ -55,6 +55,7 @@ local function scanTextInstance(instance: Instance, longTextThreshold: number): 
 		return nil
 	end
 
+	local characterCount = utf8.len(rawText) or #rawText
 	local autoLocalize = safeRead(instance, "AutoLocalize")
 	local matchIdentifier = safeRead(instance, "LocalizationMatchIdentifier")
 	local warnings: { string } = {}
@@ -62,7 +63,7 @@ local function scanTextInstance(instance: Instance, longTextThreshold: number): 
 	if autoLocalize == false then
 		appendWarning(warnings, "AUTOLOCALIZE_DISABLED")
 	end
-	if #rawText > longTextThreshold then
+	if characterCount > longTextThreshold then
 		appendWarning(warnings, "LONG_TEXT_REVIEW")
 	end
 	if string.find(rawText, "\n", 1, true) or string.find(rawText, "\r", 1, true) then
@@ -77,7 +78,7 @@ local function scanTextInstance(instance: Instance, longTextThreshold: number): 
 		className = instance.ClassName,
 		name = instance.Name,
 		text = rawText,
-		textLength = utf8.len(rawText) or #rawText,
+		textLength = characterCount,
 		autoLocalize = if typeof(autoLocalize) == "boolean" then autoLocalize else nil,
 		localizationMatchIdentifier = if typeof(matchIdentifier) == "string" then matchIdentifier else nil,
 		warnings = warnings,
@@ -91,7 +92,7 @@ function Scanner.scan(root: Instance, options: { longTextThreshold: number? }?):
 	end
 
 	local findings: { Finding } = {}
-	for _, descendant in root:GetDescendants() do
+	for _, descendant in ipairs(root:GetDescendants()) do
 		local finding = scanTextInstance(descendant, threshold)
 		if finding then
 			table.insert(findings, finding)
